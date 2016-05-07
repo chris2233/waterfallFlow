@@ -22,13 +22,58 @@ static const UIEdgeInsets ZJDefaultEdgeInsets = {10,10,10,10};
 @property (strong, nonatomic) NSMutableArray *attrsArray;
 //存放所有列当前的高度
 @property (strong, nonatomic) NSMutableArray *ColumnHeights;
+//存放内容的高度
+@property (assign, nonatomic) CGFloat contentHeight;
+
+- (CGFloat)rowMargin;
+- (CGFloat)columnMargin;
+- (NSInteger)columnCount;
+- (UIEdgeInsets)edgeInsets;
+
 
 @end
 
 @implementation ZJWaterflow
 
-//懒加载
+#pragma mark - 代理方法处理
 
+- (CGFloat)rowMargin
+{
+    if ([self.delegate respondsToSelector:@selector(rowMarginForwaterflow:)]) {
+        return [self.delegate rowMarginForwaterflow:self];
+    }else {
+        return ZJDefaultRowMargin;
+    }
+}
+
+- (CGFloat)columnMargin
+{
+    if ([self.delegate respondsToSelector:@selector(rowMarginForwaterflow:)]) {
+        return [self.delegate columnMarginForwaterflow:self];
+    }else {
+        return ZJDefaultColumnMargin;
+    }
+}
+
+- (NSInteger)columnCount
+{
+    if ([self.delegate respondsToSelector:@selector(columnCountForwaterflow:)]) {
+        return [self.delegate columnCountForwaterflow:self];
+    }else {
+        return ZJDefaultColumnCount;
+    }
+}
+
+- (UIEdgeInsets)edgeInsets
+{
+    if ([self.delegate respondsToSelector:@selector(edgeInsetsForwaterflow:)]) {
+        return [self.delegate edgeInsetsForwaterflow:self];
+    }else {
+        return ZJDefaultEdgeInsets;
+    }
+}
+
+#pragma mark - 懒加载
 -(NSMutableArray *) ColumnHeights
 {
     if (!_ColumnHeights) {
@@ -49,10 +94,13 @@ static const UIEdgeInsets ZJDefaultEdgeInsets = {10,10,10,10};
 - (void)prepareLayout
 {
     [super prepareLayout];
+    //清除内容的高度
+    self.contentHeight = 0;
+    
     //清除数组里的所有高度
     [self.ColumnHeights removeAllObjects];
-    for (NSInteger i = 0; i < ZJDefaultColumnCount; i++) {
-        self.ColumnHeights[i] = @(ZJDefaultEdgeInsets.top);
+    for (NSInteger i = 0; i < self.columnCount; i++) {
+        self.ColumnHeights[i] = @(self.edgeInsets.top);
     }
     
     //清除数组的所有属性
@@ -85,12 +133,12 @@ static const UIEdgeInsets ZJDefaultEdgeInsets = {10,10,10,10};
     //得到collectionView的宽度
     CGFloat collectionViewW = self.collectionView.frame.size.width;
     //得到每个单元的宽度
-    CGFloat w = (collectionViewW - ZJDefaultEdgeInsets.left - ZJDefaultEdgeInsets.right - (ZJDefaultColumnCount-1)*ZJDefaultColumnMargin)/ZJDefaultColumnCount;
+    CGFloat w = (collectionViewW - self.edgeInsets.left - self.edgeInsets.right - (ZJDefaultColumnCount-1)*self.columnMargin)/ZJDefaultColumnCount;
 
     //找到哪一列的高度最短
     NSInteger destColumn = 0 ;
     CGFloat minColumnHeight = [self.ColumnHeights[0] doubleValue];
-    for (NSInteger i = 1; i < ZJDefaultColumnCount; i++) {
+    for (NSInteger i = 1; i < self.columnCount; i++) {
         //取出第i列的高度
         CGFloat columnHeight = [self.ColumnHeights[i] doubleValue];
         //一旦发现有一列高度比最小的高度还小，则把这个高度纪录在minColumnHeight上，然后纪录下最短高度的i
@@ -99,13 +147,15 @@ static const UIEdgeInsets ZJDefaultEdgeInsets = {10,10,10,10};
             destColumn = i;
         }
     }
-    CGFloat h = 50 + arc4random_uniform(100);
-    CGFloat x = ZJDefaultEdgeInsets.left + (w + ZJDefaultColumnMargin) * destColumn;
+    //解除高度和数据源的依赖关系
+    CGFloat h = [self.delegate waterflow:self heightForItemAtIndex:indexPath.item itemWidth:w];
+    
+    CGFloat x = self.edgeInsets.left + (w + self.columnMargin) * destColumn;
     CGFloat y = minColumnHeight;
     
-    if(y != ZJDefaultEdgeInsets.top)
+    if(y != self.edgeInsets.top)
     {
-        y += ZJDefaultRowMargin;
+        y += self.rowMargin;
     }
     //设置布局的属性
     attrs.frame = CGRectMake(x, y, w, h);
@@ -113,23 +163,18 @@ static const UIEdgeInsets ZJDefaultEdgeInsets = {10,10,10,10};
     //更新最短哪一列的高度
     self.ColumnHeights[destColumn] = @(CGRectGetMaxY(attrs.frame));
     
+    CGFloat columnHeight = [self.ColumnHeights[destColumn] doubleValue];
+    //如果整体的高度是小于当前最长列的高度的话，就把高度保存这个属性中
+    if (self.contentHeight < columnHeight) {
+        self.contentHeight = columnHeight;
+    }
     return attrs;
 }
 
 -(CGSize)collectionViewContentSize
 {
-    //找到哪一列的高度最长
-    CGFloat maxColumnHeight = [self.ColumnHeights[0] doubleValue];
-    for (NSInteger i = 1; i < ZJDefaultColumnCount; i++) {
-        //取出第i列的高度
-        CGFloat columnHeight = [self.ColumnHeights[i] doubleValue];
-        //一旦发现有一列高度比最小的高度还小，则把这个高度纪录在minColumnHeight上，然后纪录下最短高度的i
-        if (maxColumnHeight < columnHeight) {
-            maxColumnHeight = columnHeight;
-        }
-    }
     
-    return CGSizeMake(0, maxColumnHeight + ZJDefaultEdgeInsets.bottom);
+    return CGSizeMake(0, self.contentHeight + self.edgeInsets.bottom);
 }
 
 @end

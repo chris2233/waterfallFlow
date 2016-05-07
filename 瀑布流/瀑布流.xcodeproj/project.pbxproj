@@ -52,8 +52,8 @@
 		2F58C1FD1CDCEE0A00B59ECD /* 瀑布流UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "瀑布流UITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F58C2011CDCEE0A00B59ECD /* ___UITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "___UITests.m"; sourceTree = "<group>"; };
 		2F58C2031CDCEE0A00B59ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2FF8C72D1CDDF89700159A37 /* ZJWaterflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJWaterflow.h; sourceTree = "<group>"; };
-		2FF8C72E1CDDF89700159A37 /* ZJWaterflow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJWaterflow.m; sourceTree = "<group>"; };
+		2FF8C72D1CDDF89700159A37 /* ZJWaterflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZJWaterflow.h; path = "瀑布流/ZJWaterflow.h"; sourceTree = "<group>"; };
+		2FF8C72E1CDDF89700159A37 /* ZJWaterflow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZJWaterflow.m; path = "瀑布流/ZJWaterflow.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +84,7 @@
 		2F58C1D01CDCEE0A00B59ECD = {
 			isa = PBXGroup;
 			children = (
+				2FF8C7301CDE3A0900159A37 /* waterflowLayout */,
 				2F58C1DB1CDCEE0A00B59ECD /* 瀑布流 */,
 				2F58C1F51CDCEE0A00B59ECD /* 瀑布流Tests */,
 				2F58C2001CDCEE0A00B59ECD /* 瀑布流UITests */,
@@ -104,8 +105,6 @@
 		2F58C1DB1CDCEE0A00B59ECD /* 瀑布流 */ = {
 			isa = PBXGroup;
 			children = (
-				2FF8C72D1CDDF89700159A37 /* ZJWaterflow.h */,
-				2FF8C72E1CDDF89700159A37 /* ZJWaterflow.m */,
 				2F58C1DF1CDCEE0A00B59ECD /* AppDelegate.h */,
 				2F58C1E01CDCEE0A00B59ECD /* AppDelegate.m */,
 				2F58C1E21CDCEE0A00B59ECD /* ViewController.h */,
@@ -143,6 +142,15 @@
 				2F58C2031CDCEE0A00B59ECD /* Info.plist */,
 			);
 			path = "瀑布流UITests";
+			sourceTree = "<group>";
+		};
+		2FF8C7301CDE3A0900159A37 /* waterflowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				2FF8C72D1CDDF89700159A37 /* ZJWaterflow.h */,
+				2FF8C72E1CDDF89700159A37 /* ZJWaterflow.m */,
+			);
+			name = waterflowLayout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
